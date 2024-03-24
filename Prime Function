@@ -1,0 +1,23 @@
+CREATE OR ALTER FUNCTION Prime (@num INT) 
+RETURNS BIT
+AS
+BEGIN
+	DECLARE @isPrime BIT = 1 --Make prime # a true statement
+	DECLARE @i INT = 2 -- start with 2 becasue 1 is not a prime or composite. 
+	
+	-- Prime = find square root of number given. if it divides by 2 with a remainder its Prime 
+
+		WHILE @i <= SQRT(@num)
+		BEGIN
+			--checks aganist boolean if no remainder it is composite. making isPrime false
+			IF @num % @i = 0
+			BEGIN
+				SET @isPrime = 0
+				BREAK
+			END
+		SET @i = @i + 1
+		END
+
+	        RETURN @isPrime
+END -- end function
+GO
