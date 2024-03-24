@@ -1,0 +1,61 @@
+CREATE OR ALTER PROCEDURE CalculatorTest_v3 
+(
+  @num1 FLOAT,
+  @num2 FLOAT,
+  @operator CHAR(1)
+)
+AS 
+BEGIN
+	DECLARE @Ans FLOAT
+	DECLARE @Display_Ans VARCHAR(100)
+
+	--SET the answer from Operator function 
+	SET @Ans = dbo.Operator(@num1,@num2,@operator)
+	
+	-- DISPLAY FACTORS!!!!!!!!!!!!!!!
+
+	--DIVIDE BY 0 ERROR OR WRONG OPPERATOR ERROR
+	IF @operator = '/' AND @num2 = 0
+		PRINT 'Silly Rabbit you cant divide by 0'
+	ELSE IF @operator NOT IN ('+','-','*','/','^')
+		BEGIN
+			PRINT 'ERROR! UNRECOGNIZED OPERATOR! 
+				LETS TRY AGAIN:('
+		END
+
+	-- Prints out Answer, Even/Odd, Prime/Composite
+	ELSE 
+	BEGIN
+		--THE ANSWER DISPLAY
+		SET @Display_Ans = CONCAT('ANSWER: ', @Ans)
+		
+		--EVEN/ODD FACTOR. If divisble by 2 then decide if even or odd. Concat the answer with even/odd statement. 
+		--Gotta use cast to change float to int for modulus opperand
+		IF CAST(@Ans AS INT) % 2 = 0
+		SET @Display_Ans = CONCAT(@Display_Ans, '. This is an even number')
+
+		ELSE 
+		SET @Display_Ans = CONCAT(@Display_Ans, '. This is an odd number')
+		
+		--PRIME/COMPOSITE FACTOR
+		--take answer. convert to int. and if greater than 1, check it aganist Prime function.
+		IF CAST(@Ans as INT) > 1
+			BEGIN
+				/* if output from the function Prime is 1. It is Prime. Else = Composite. Then set the display 
+				message concat with the previously set Display_Ans */
+			IF dbo.Prime(CAST(@Ans as INT)) = 1 
+				SET @Display_Ans = CONCAT(@Display_Ans, '. This number is Prime')
+			ELSE
+				SET @Display_Ans = CONCAT(@Display_Ans, '. This number is an Composite')
+			END
+
+		/* This applies to number 1 and negative numbers. because prime/composite doesnt apply to these 
+		values so print results with answer, even/odd, and that they are niether comp or prime factors*/
+		ELSE
+			SET @Display_Ans = CONCAT(@Display_Ans, '. This number is neither a composite or prime')
+
+			--Print the value
+			PRINT @Display_Ans
+		END -- end of else statement(before error) for Prints out Answer, Even/Odd, Prime/Composite
+END -- end of procedure
+GO
